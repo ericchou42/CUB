@@ -1,14 +1,70 @@
-def josephus(n, k):
-    # 迭代法解約瑟夫問題，n是總人數，k是報數時要退出的人數
-    last_position = 0  # 當只有一個人時，位置是 0 (這裡用 0-based 編號)
-    for i in range(2, n + 1):
-        last_position = (last_position + k) % i
-    return last_position + 1  # 轉換成 1-based 編號
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
 
-# 測試：QA 部門有 n 個人，報數到 3 的人退出
-n = int(input("請輸入參與團康活動的人數: "))
-k = 3  # 報數到 3 的人退出
+# 設置 ChromeDriver 路徑
+chrome_driver_path = "你的/chromedriver/路徑"
 
-# 計算最後留下的同事的順位
-last_person = josephus(n, k)
-print(f"最後留下的是第 {last_person} 位同事")
+# 設置 Chrome 瀏覽器選項
+chrome_options = webdriver.ChromeOptions()
+chrome_options.add_argument("--start-maximized")  # 全螢幕打開
+
+# 啟動 Chrome 瀏覽器
+service = Service(chrome_driver_path)
+driver = webdriver.Chrome(service=service, options=chrome_options)
+
+# 打開國泰世華銀行官網
+url = "https://www.cathaybk.com.tw/cathaybk/"
+driver.get(url)
+
+# 等待網頁加載完成
+time.sleep(5)  # 等待5秒
+
+# 點擊左上角的選單按鈕
+menu_button = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.CSS_SELECTOR, "button.hamburger-menu"))
+)
+menu_button.click()
+
+# 等待選單出現，點擊 "個人金融"
+personal_finance_button = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.LINK_TEXT, "個人金融"))
+)
+personal_finance_button.click()
+
+# 點擊 "產品介紹"
+product_intro_button = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.LINK_TEXT, "產品介紹"))
+)
+product_intro_button.click()
+
+# 點擊 "信用卡"
+credit_card_button = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.LINK_TEXT, "信用卡"))
+)
+credit_card_button.click()
+
+# 點擊 "卡片介紹"
+card_intro_button = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.LINK_TEXT, "卡片介紹"))
+)
+card_intro_button.click()
+
+# 等待卡片介紹頁面加載完成
+time.sleep(5)
+
+# 計算所有標記為 "(停發)" 的信用卡數量
+discontinued_cards = driver.find_elements(By.XPATH, "//*[contains(text(), '停發')]")
+num_discontinued_cards = len(discontinued_cards)
+print(f"停發信用卡總數: {num_discontinued_cards}")
+
+# 截取螢幕並保存
+screenshot_path = "discontinued_credit_cards_screenshot.png"
+driver.save_screenshot(screenshot_path)
+print(f"停發信用卡列表截圖已保存到: {screenshot_path}")
+
+# 關閉瀏覽器
+driver.quit()
