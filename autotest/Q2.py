@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 
 # 設置 ChromeDriver 路徑
-chrome_driver_path = "你的/chromedriver/路徑"
+chrome_driver_path = "/Users/ericchou/Desktop/ai-chat/CUB/chromedriver"
 
 # 設置 Chrome 瀏覽器選項
 chrome_options = webdriver.ChromeOptions()
